@@ -1,14 +1,16 @@
 
-
-class TicTacToe:
-	def __init_(self, size):
-		self.gameSize = size
-		self.grid = self.createGrid(size)
+class ttt:
+	def __init__(self, size):
+		print("here")
+		self.gridSize = size
+		self.grid = self.createGrid()
 
 	def createGrid(self):
-		grid = [[] for i in range(self.gridSize)]
-		for j in range(self.gridSize):
-			grid.append(" ")
+		grid = []
+		for i in range(self.gridSize):
+			grid.append([])
+			for j in range(self.gridSize):
+				grid[i].append(" ")
 
 		print(grid)
 		return grid

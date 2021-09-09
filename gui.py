@@ -64,15 +64,15 @@ class GUIController:
 		# Displaying the slider to change the game grid size
 		Label(middleFrameBot, text="Enter Board Size:", bg=self.backgroundColor, fg=self.titleColor).grid(column=0, row=0)
 		
-		gridSize = 0
-		Scale(middleFrameBot, from_=3, to=20, orient=HORIZONTAL, bg=self.backgroundColor, fg=self.buttonTextColor,
-		variable=gridSize, activebackground=self.backgroundColor, troughcolor=self.buttonColor).grid(column=0, row=1, sticky="nsew", padx=20, pady=2)
+		gridSizeSlider = Scale(middleFrameBot, from_=3, to=20, orient=HORIZONTAL, bg=self.backgroundColor, fg=self.buttonTextColor,
+		activebackground=self.backgroundColor, troughcolor=self.buttonColor)
+		gridSizeSlider.grid(column=0, row=1, sticky="nsew", padx=20, pady=2)
 
 		# Display the exit button
 		Button(bottomFrame, text="Exit", bg="red", fg=self.buttonTextColor, width=10, command=lambda: sys.exit(), relief=GROOVE).grid(column=0, row=0, padx=5, pady=15, sticky="nsew")
 
 		# Displaying the start button
-		sB = Button(bottomFrame, text="Start", bg="#4ABF36", activebackground="#62FA47", fg=self.buttonTextColor, width=10, relief=GROOVE, command=TicTacToe.TicTacToe(gridSize))
+		sB = Button(bottomFrame, text="Start", bg="#4ABF36", activebackground="#62FA47", fg=self.buttonTextColor, width=10, relief=GROOVE, command=lambda: self.disGameWindow(gridSizeSlider.get()))
 		sB.grid(column=1, row=0, padx=5, pady=15, sticky="nsew")
 		self.changeOnHover(sB, "#56F222", "#4ABF36")
 
@@ -95,9 +95,13 @@ class GUIController:
 		window.mainloop()
   
 	# Displaying the game window with proper grid size
-	def disGameWindow(self, gameState):
+	def disGameWindow(self, gameSize):
 		# Clear the current window
 		self.clearWindow()
+
+		tictactoe = TicTacToe.ttt(gameSize)
+		
+
 
 	# Function to change properties of button on hover
 	def changeOnHover(self, button, colorOnHover, colorOnLeave):

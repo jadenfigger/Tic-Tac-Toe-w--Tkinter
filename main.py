@@ -4,7 +4,6 @@
 
 from tkinter import messagebox
 import gui
-	
 
 if (__name__ == "__main__"):
 	controller = gui.GUIController()
