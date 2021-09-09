@@ -9,13 +9,13 @@ class GUIController:
 	def __init__(self):
 		self.backgroundColor = "#FFE6E8"
 		self.titleColor = "#000000"
+		self.frameColor = "#fccfd3"
 
 		self.buttonTextColor = "#0A241C"
 		self.buttonColor = "#FA867A"
-		self.buttonPressedColor = "#fc8174"
+		self.buttonPressedColor = "#fc4430"
 		self.buttonHovorColor = "#fc7365"
 
-		self.frameColor = "#f2f2f2"
 
 	#Displaying the home window, is the first window called
 	def disHome(self):
@@ -23,52 +23,75 @@ class GUIController:
 		self.clearWindow()
 
 		# Creating the frames
-		rightFrame = Frame(window)
 		topFrame = Frame(window)
-		middleFrame = Frame(window)
+
+		middleFrames = Frame(window)
+		middleFrameTop = Frame(middleFrames, padx=15, pady=0)
+		middleFrameMid = Frame(middleFrames, padx=15, pady=0)
+		bottomFrame = Frame(window)
 
 		# Display the title
-		Label(topFrame, text="Tic Tac Toe", bg=self.backgroundColor, fg=self.titleColor).grid(column=0, row=0)
+		Label(topFrame, text="Tic Tac Toe", bg=self.backgroundColor, fg=self.titleColor, font=("Roboto", 35)).grid(column=0, row=0, pady=15)
+
+		# Display the exit button
+		Button(bottomFrame, text="Exit", bg="red", fg=self.buttonTextColor, command=lambda: sys.exit()).grid(column=0, row=0, sticky="ne", pady=15)
 
 		buttonsList = []
 
-		# Display the exit button
-		Button(rightFrame, text="Exit", bg="red", fg=self.buttonTextColor, command=lambda: sys.exit()).grid(column=0, row=0, sticky="ne")
+		# Displaying Single Player Button
+		buttonsList.append(Button(middleFrameTop, text="Single Player", bg=self.buttonColor, fg=self.buttonTextColor,
+		 activebackground=self.buttonPressedColor, padx=10, pady=10, width=10))
+		buttonsList[-1].grid(column=0, row=0, padx=2, pady=2)
 
-		# Display the options
-		buttonsList.append(Button(middleFrame, text="Single Player", bg=self.buttonColor, fg=self.buttonTextColor, activebackground=self.buttonPressedColor, padx=10, pady=10))
-		buttonsList[-1].grid(column=0, row=0, sticky="nsew")
-		buttonsList.append(Button(middleFrame, text="Multiplayer", bg=self.buttonColor, fg=self.buttonTextColor, activebackground=self.buttonPressedColor, padx=10, pady=10))
-		buttonsList[-1].grid(column=1, row=0, sticky="nsew")
-		buttonsList.append(Button(middleFrame, text="Easy", bg=self.buttonColor, fg=self.buttonTextColor, activebackground=self.buttonPressedColor, padx=10, pady=10))
-		buttonsList[-1].grid(column=0, row=1, sticky="nsew")	
-		buttonsList.append(Button(middleFrame, text="Impossible", bg=self.buttonColor, fg=self.buttonTextColor, activebackground=self.buttonPressedColor, padx=10, pady=10))
-		buttonsList[-1].grid(column=1, row=1, sticky="nsew")
+		# Displaying Multiplayer Button
+		buttonsList.append(Button(middleFrameTop, text="Multiplayer", bg=self.buttonColor, fg=self.buttonTextColor,
+		 activebackground=self.buttonPressedColor, padx=10, pady=10, width=10))
+		buttonsList[-1].grid(column=0, row=1, padx=2, pady=2)
 
+		# Displaying Easy Button
+		buttonsList.append(Button(middleFrameMid, text="Easy", bg=self.buttonColor, fg=self.buttonTextColor,
+		 activebackground=self.buttonPressedColor, padx=10, pady=10, width=10))
+		buttonsList[-1].grid(column=0, row=0, padx=2, pady=2)	
+
+		# Displaying Impossible Button
+		buttonsList.append(Button(middleFrameMid, text="Impossible", bg=self.buttonColor, fg=self.buttonTextColor,
+		 activebackground=self.buttonPressedColor, padx=10, pady=10, width=10))
+		buttonsList[-1].grid(column=1, row=0, padx=2, pady=2)
+
+		# Changing the button colors when the mouse is hovored over
 		for button in buttonsList:
 			self.changeOnHover(button, self.buttonHovorColor, self.buttonColor)
 
+		# Displaying the slider to change the game grid size
+		gridSize = 0
+		Scale(middleFrames, from_=3, to=20, orient=HORIZONTAL, bg=self.backgroundColor, fg=self.buttonTextColor,
+		variable=gridSize, relief=FLAT, activebackground=self.backgroundColor, troughcolor=self.buttonColor).grid(column=0, row=2)
+
 		# Displaying the frames
-		rightFrame.grid(column=1, row=0)
 		topFrame.grid(column=0, row=0)
-		middleFrame.grid(column=0, row=1)
+		middleFrames.grid(column=0, row=1)
+		middleFrameTop.grid(column=0, row=0)
+		middleFrameMid.grid(column=0, row=1)
+		bottomFrame.grid(column=0, row=2)
 		# Setting the background colors
-		rightFrame.configure(bg=self.backgroundColor)
 		topFrame.configure(bg=self.backgroundColor)
-		middleFrame.configure(bg=self.backgroundColor)
+		middleFrames.configure(bg=self.backgroundColor)
+		middleFrameTop.configure(bg=self.backgroundColor)
+		middleFrameMid.configure(bg=self.backgroundColor)
+		bottomFrame.configure(bg=self.backgroundColor)
 		window.configure(bg=self.backgroundColor)
 
 		window.mainloop()
   
 
-	# function to change properties of button on hover
+	# Function to change properties of button on hover
 	def changeOnHover(self, button, colorOnHover, colorOnLeave):
-		# adjusting backgroung of the widget
-		# background on entering widget
+		# Adjusting backgroung of the widget
+		# Background on entering widget
 		button.bind("<Enter>", func=lambda e: button.config(
 			background=colorOnHover))
 	
-		# background color on leving widget
+		# Background color on leving widget
 		button.bind("<Leave>", func=lambda e: button.config(
 			background=colorOnLeave))
 

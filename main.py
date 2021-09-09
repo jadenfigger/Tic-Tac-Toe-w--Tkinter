@@ -1,5 +1,5 @@
 # Jaden Figger
-# Accounts Receivable Project
+# Tik Tac Toe
 # 9/7/21
 
 from tkinter import messagebox
