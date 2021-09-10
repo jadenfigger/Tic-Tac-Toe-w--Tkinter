@@ -1,4 +1,5 @@
 from tkinter import *
+from tkinter import font
 from main import * 
 import sys
 import TicTacToe
@@ -17,6 +18,11 @@ class GUIController:
 		self.buttonPressedColor = "#fc4430"
 		self.buttonHovorColor = "#fc7365"
 
+		self.tictactoe = None
+		self.buttonList = []
+
+		self.sliderValue = 3
+		self.gridSlider = DoubleVar()
 
 	#Displaying the home window, is the first window called
 	def disHome(self):
@@ -61,18 +67,20 @@ class GUIController:
 			self.changeOnHover(button, self.buttonHovorColor, self.buttonColor)
 
 		# Displaying the slider to change the game grid size
-		Label(middleFrameBot, text="Enter Board Size:", bg=self.frameColor, fg=self.titleColor).grid(column=0, row=0)
+		Label(middleFrameBot, text="Enter Board Size:", bg=self.frameColor, fg=self.titleColor,).grid(column=0, row=0)
 		
-		gridSizeSlider = Scale(middleFrameBot, from_=3, to=20, orient=HORIZONTAL, bg=self.frameColor, fg=self.buttonTextColor,
-		activebackground=self.backgroundColor, troughcolor=self.buttonColor)
-		gridSizeSlider.grid(column=0, row=1, sticky="nsew", padx=20, pady=2)
+		self.gridSlider = Scale(middleFrameBot, from_=3, to=20, orient=HORIZONTAL, bg=self.frameColor, fg=self.buttonTextColor,
+		activebackground=self.backgroundColor, troughcolor=self.buttonColor, variable=self.sliderValue, command=self.updateSliderValue())
+		self.gridSlider.grid(column=0, row=1, sticky="nsew", padx=20, pady=2)
+
+		self.gridSlider.config()
 
 		# Display the exit button
 		Button(bottomFrame, text="Exit", bg="red", fg=self.buttonTextColor, width=10, command=lambda: sys.exit(), relief=GROOVE).grid(column=0, row=0, padx=5, pady=15, sticky="nsew")
 
 		# Displaying the start button
 		sB = Button(bottomFrame, text="Start", bg="#4ABF36", activebackground="#62FA47", fg=self.buttonTextColor, 
-		width=10, relief=GROOVE, command=lambda i=(gridSizeSlider.get(), True): self.disGameWindow(i))
+		width=10, relief=GROOVE, command=lambda: self.disGameWindow((self.gridSlider.get(), True)))
 		sB.grid(column=1, row=0, padx=5, pady=15, sticky="nsew")
 		self.changeOnHover(sB, "#56F222", "#4ABF36")
 
@@ -101,9 +109,8 @@ class GUIController:
 		# Clear the current window
 		self.clearWindow()
 
-		tictactoe = None
 		if (initial):
-			tictactoe = TicTacToe.ttt(gridSize)
+			self.tictactoe = TicTacToe.ttt(gridSize)
 
 		topFrame = Frame(window)
 		gameFrame = Frame(window, padx=15, pady=15)
@@ -111,10 +118,11 @@ class GUIController:
 		bottomFrame = Frame(window)
 
 		frames = []
-		buttonList = []
+		self.buttonList = []
 		for i in range(gridSize):
+			(i)
 			frames.append([])
-			buttonList.append([])
+			self.buttonList.append([])
 			for j in range(gridSize):
 				px = ((j != 0) * 2,  (j != gridSize-1) * 2)
 				py = ((i != 0) * 2,  (i != gridSize-1) * 2)
@@ -123,9 +131,9 @@ class GUIController:
 				frames[i][j].pack_propagate(False)
 				frames[i][j].grid(row=i, column=j, padx=px, pady=py)
 
-				buttonList[i].append(Button(frames[i][j], text=tictactoe.grid[i][j], bg=self.frameColor, relief=FLAT,
-				command=lambda p=(i, j): self.disGameWindow(p)))
-				buttonList[i][-1].pack(expand=True, fill=BOTH)
+				self.buttonList[i].append(Button(frames[i][j], text=self.tictactoe.grid[i][j], bg=self.frameColor, relief=FLAT,
+				command=lambda p=(i, j): self.buttonClicked(p)))
+				self.buttonList[i][-1].pack(expand=True, fill=BOTH)
 
 
 		# Displaying the score and who's turn it is
@@ -168,7 +176,27 @@ class GUIController:
 			background=colorOnLeave))
 
 
+	def buttonClicked(self, index):
+		self.buttonList[index[0]][index[1]]['font'] = self.findFontSize(self.tictactoe.gridSize)
+		self.buttonList[index[0]][index[1]]['text'] = self.tictactoe.turn
+
+		self.tictactoe.updateGameGrid(index)
+
+
 	# Clears the entire window
 	def clearWindow(self):
 		for widget in window.winfo_children():
 			widget.destroy()
+
+	def findFontSize(self, size):
+		s = 22
+		if (3 <= size < 4): s = 100
+		elif (6 <= size < 15): s = 30
+		else: s = 20
+
+		f = font.Font(family="Roboto", size=s)
+		return f
+
+	def updateSliderValue(self, variable):
+		print("slider changed")
+		

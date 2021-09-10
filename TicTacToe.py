@@ -16,7 +16,7 @@ class ttt:
 
 		return grid
 
-	def drawNextMove(self, index):
+	def updateGameGrid(self, index):
 		self.grid[index[0]][index[1]] = self.turn
 
 		if (self.turn == "X"): self.turn="O"

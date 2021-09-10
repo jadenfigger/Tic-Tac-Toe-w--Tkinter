@@ -8,6 +8,7 @@ import gui
 if (__name__ == "__main__"):
 	controller = gui.GUIController()
  
-	gui.window.option_add( "*font", "roboto 22" )	
+	gui.window.option_add( "*font", "roboto 22")
 
 	controller.disHome()
+
