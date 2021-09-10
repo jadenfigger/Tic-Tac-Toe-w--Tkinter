@@ -71,7 +71,8 @@ class GUIController:
 		Button(bottomFrame, text="Exit", bg="red", fg=self.buttonTextColor, width=10, command=lambda: sys.exit(), relief=GROOVE).grid(column=0, row=0, padx=5, pady=15, sticky="nsew")
 
 		# Displaying the start button
-		sB = Button(bottomFrame, text="Start", bg="#4ABF36", activebackground="#62FA47", fg=self.buttonTextColor, width=10, relief=GROOVE, command=lambda: self.disGameWindow(gridSizeSlider.get()))
+		sB = Button(bottomFrame, text="Start", bg="#4ABF36", activebackground="#62FA47", fg=self.buttonTextColor, 
+		width=10, relief=GROOVE, command=lambda i=(gridSizeSlider.get(), True): self.disGameWindow(i))
 		sB.grid(column=1, row=0, padx=5, pady=15, sticky="nsew")
 		self.changeOnHover(sB, "#56F222", "#4ABF36")
 
@@ -94,20 +95,26 @@ class GUIController:
 		window.mainloop()
   
 	# Displaying the game window with proper grid size
-	def disGameWindow(self, gridSize):
+	def disGameWindow(self, p):
+		gridSize = p[0]
+		initial = p[1]
 		# Clear the current window
 		self.clearWindow()
 
-		tictactoe = TicTacToe.ttt(gridSize)
+		tictactoe = None
+		if (initial):
+			tictactoe = TicTacToe.ttt(gridSize)
 
-		topFrame = Frame(window, padx=15, pady=15)
+		topFrame = Frame(window)
 		gameFrame = Frame(window, padx=15, pady=15)
 		gridBackgroundFrame = Frame(gameFrame)
-		bottomFrame = Frame(window, padx=15, pady=15)
+		bottomFrame = Frame(window)
 
 		frames = []
+		buttonList = []
 		for i in range(gridSize):
 			frames.append([])
+			buttonList.append([])
 			for j in range(gridSize):
 				px = ((j != 0) * 2,  (j != gridSize-1) * 2)
 				py = ((i != 0) * 2,  (i != gridSize-1) * 2)
@@ -116,34 +123,38 @@ class GUIController:
 				frames[i][j].pack_propagate(False)
 				frames[i][j].grid(row=i, column=j, padx=px, pady=py)
 
-				Button(frames[i][j], text="X", bg=self.frameColor, relief=FLAT).pack(expand=True, fill=BOTH)
+				buttonList[i].append(Button(frames[i][j], text=tictactoe.grid[i][j], bg=self.frameColor, relief=FLAT,
+				command=lambda p=(i, j): self.disGameWindow(p)))
+				buttonList[i][-1].pack(expand=True, fill=BOTH)
+
 
 		# Displaying the score and who's turn it is
-		Label(topFrame, text="Player", bg=self.frameColor, fg=self.titleColor).grid(column=0, row=0, stick="w")
-		Label(topFrame, text="Computer", bg=self.frameColor, fg=self.titleColor).grid(column=1, row=0, stick="e")
+		Label(topFrame, text="Player", bg=self.frameColor, fg=self.titleColor, padx=5).grid(column=0, row=0)
+		Label(topFrame, text="Computer", bg=self.frameColor, fg=self.titleColor, padx=5).grid(column=1, row=0)
 
 		# Displaying the home button
-		Button(bottomFrame, text="Exit", bg="red", fg=self.buttonTextColor, width=10, command=lambda: sys.exit(), relief=GROOVE).grid(column=0, row=0, padx=5, pady=15, sticky="nsew")
+		Button(bottomFrame, text="Exit", bg="red", fg=self.buttonTextColor, width=10,
+		 command=lambda: sys.exit(), relief=GROOVE).grid(column=0, row=0, padx=5, pady=15, sticky="nsew")
 
 		# Displaying the start button
-		sB = Button(bottomFrame, text="Start", bg="#4ABF36", activebackground="#62FA47", fg=self.buttonTextColor, width=10, relief=GROOVE, command=lambda: self.disGameWindow(gridSizeSlider.get()))
+		sB = Button(bottomFrame, text="Home", bg="#4ABF36", activebackground="#62FA47", fg=self.buttonTextColor,
+		 width=10, relief=GROOVE, command=self.disHome)
 		sB.grid(column=1, row=0, padx=5, pady=15, sticky="nsew")
 		self.changeOnHover(sB, "#56F222", "#4ABF36")
 
 
-		topFrame.grid(column=0, row=0)
+		topFrame.grid(column=0, row=0, pady=15)
 		gameFrame.grid(column=0, row=1)
 		gridBackgroundFrame.grid(column=0, row=0)
-		bottomFrame.grid(column=0, row=2)
+		bottomFrame.grid(column=0, row=2, pady=5, sticky="n")
 		# Drawing Background 
-		topFrame.configure(bg=self.frameColor)
+		topFrame.configure(bg=self.backgroundColor)
 		gameFrame.configure(bg=self.frameColor)
 		gridBackgroundFrame.configure(bg=self.buttonColor)
-		bottomFrame.configure(bg=self.frameColor)
+		bottomFrame.configure(bg=self.backgroundColor)
 
-	def buttonClicked(self, i, j):
-		print(i, j)
-	
+		window.mainloop()
+		
 
 	# Function to change properties of button on hover
 	def changeOnHover(self, button, colorOnHover, colorOnLeave):
