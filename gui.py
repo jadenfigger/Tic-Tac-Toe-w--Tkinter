@@ -8,9 +8,9 @@ window.config(padx=15, pady=15)
 
 class GUIController:
 	def __init__(self):
-		self.backgroundColor = "#FFE6E8"
+		self.backgroundColor = "#FA867A"
 		self.titleColor = "#000000"
-		self.frameColor = "#fccfd3"
+		self.frameColor = "#FFE6E8"
 
 		self.buttonTextColor = "#0A241C"
 		self.buttonColor = "#FA867A"
@@ -25,7 +25,6 @@ class GUIController:
 
 		# Creating the frames
 		topFrame = Frame(window)
-
 		middleFrames = Frame(window, pady=10, relief=RIDGE, bd=2)
 		middleFrameTop = Frame(middleFrames, padx=15, pady=0)
 		middleFrameMid = Frame(middleFrames, padx=15, pady=0)
@@ -62,9 +61,9 @@ class GUIController:
 			self.changeOnHover(button, self.buttonHovorColor, self.buttonColor)
 
 		# Displaying the slider to change the game grid size
-		Label(middleFrameBot, text="Enter Board Size:", bg=self.backgroundColor, fg=self.titleColor).grid(column=0, row=0)
+		Label(middleFrameBot, text="Enter Board Size:", bg=self.frameColor, fg=self.titleColor).grid(column=0, row=0)
 		
-		gridSizeSlider = Scale(middleFrameBot, from_=3, to=20, orient=HORIZONTAL, bg=self.backgroundColor, fg=self.buttonTextColor,
+		gridSizeSlider = Scale(middleFrameBot, from_=3, to=20, orient=HORIZONTAL, bg=self.frameColor, fg=self.buttonTextColor,
 		activebackground=self.backgroundColor, troughcolor=self.buttonColor)
 		gridSizeSlider.grid(column=0, row=1, sticky="nsew", padx=20, pady=2)
 
@@ -85,23 +84,66 @@ class GUIController:
 		bottomFrame.grid(column=0, row=2)
 		# Setting the background colors
 		topFrame.configure(bg=self.backgroundColor)
-		middleFrames.configure(bg=self.backgroundColor)
-		middleFrameTop.configure(bg=self.backgroundColor)
-		middleFrameMid.configure(bg=self.backgroundColor)
-		middleFrameBot.configure(bg=self.backgroundColor)
+		middleFrames.configure(bg=self.frameColor)
+		middleFrameTop.configure(bg=self.frameColor)
+		middleFrameMid.configure(bg=self.frameColor)
+		middleFrameBot.configure(bg=self.frameColor)
 		bottomFrame.configure(bg=self.backgroundColor)
 		window.configure(bg=self.backgroundColor)
 
 		window.mainloop()
   
 	# Displaying the game window with proper grid size
-	def disGameWindow(self, gameSize):
+	def disGameWindow(self, gridSize):
 		# Clear the current window
 		self.clearWindow()
 
-		tictactoe = TicTacToe.ttt(gameSize)
-		
+		tictactoe = TicTacToe.ttt(gridSize)
 
+		topFrame = Frame(window, padx=15, pady=15)
+		gameFrame = Frame(window, padx=15, pady=15)
+		gridBackgroundFrame = Frame(gameFrame)
+		bottomFrame = Frame(window, padx=15, pady=15)
+
+		frames = []
+		for i in range(gridSize):
+			frames.append([])
+			for j in range(gridSize):
+				px = ((j != 0) * 2,  (j != gridSize-1) * 2)
+				py = ((i != 0) * 2,  (i != gridSize-1) * 2)
+				frames[i].append(Frame(gridBackgroundFrame, bg=self.frameColor,
+				 width=int(400/gridSize), height=int(400/gridSize)))
+				frames[i][j].pack_propagate(False)
+				frames[i][j].grid(row=i, column=j, padx=px, pady=py)
+
+				Button(frames[i][j], text="X", bg=self.frameColor, relief=FLAT).pack(expand=True, fill=BOTH)
+
+		# Displaying the score and who's turn it is
+		Label(topFrame, text="Player", bg=self.frameColor, fg=self.titleColor).grid(column=0, row=0, stick="w")
+		Label(topFrame, text="Computer", bg=self.frameColor, fg=self.titleColor).grid(column=1, row=0, stick="e")
+
+		# Displaying the home button
+		Button(bottomFrame, text="Exit", bg="red", fg=self.buttonTextColor, width=10, command=lambda: sys.exit(), relief=GROOVE).grid(column=0, row=0, padx=5, pady=15, sticky="nsew")
+
+		# Displaying the start button
+		sB = Button(bottomFrame, text="Start", bg="#4ABF36", activebackground="#62FA47", fg=self.buttonTextColor, width=10, relief=GROOVE, command=lambda: self.disGameWindow(gridSizeSlider.get()))
+		sB.grid(column=1, row=0, padx=5, pady=15, sticky="nsew")
+		self.changeOnHover(sB, "#56F222", "#4ABF36")
+
+
+		topFrame.grid(column=0, row=0)
+		gameFrame.grid(column=0, row=1)
+		gridBackgroundFrame.grid(column=0, row=0)
+		bottomFrame.grid(column=0, row=2)
+		# Drawing Background 
+		topFrame.configure(bg=self.frameColor)
+		gameFrame.configure(bg=self.frameColor)
+		gridBackgroundFrame.configure(bg=self.buttonColor)
+		bottomFrame.configure(bg=self.frameColor)
+
+	def buttonClicked(self, i, j):
+		print(i, j)
+	
 
 	# Function to change properties of button on hover
 	def changeOnHover(self, button, colorOnHover, colorOnLeave):

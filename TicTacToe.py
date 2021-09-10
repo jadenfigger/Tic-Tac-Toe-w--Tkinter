@@ -1,7 +1,6 @@
 
 class ttt:
 	def __init__(self, size):
-		print("here")
 		self.gridSize = size
 		self.grid = self.createGrid()
 
@@ -12,5 +11,4 @@ class ttt:
 			for j in range(self.gridSize):
 				grid[i].append(" ")
 
-		print(grid)
 		return grid
