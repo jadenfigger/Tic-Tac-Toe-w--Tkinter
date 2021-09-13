@@ -5,7 +5,8 @@ class ttt:
 		self.gridSize = size
 		self.grid = self.createGrid()
 
-		self.turn = "X"
+		# If using minimax algorithm, user is maximizer(1) and computer is minimizer(-1)
+		self.turn = 1
 
 	def createGrid(self):
 		grid = []
@@ -22,10 +23,7 @@ class ttt:
 		if (self.turn == "X"): self.turn="O"
 		else: self.turn="X"
 
-		winner = self.findWinner()
-
-		# if (winner == None):
-		# 	gui.GUIController.disGameWindow(gui.GUIController(), self.gridSize)
+		# winner = self.findWinner()			
 
 
 	def findWinner(self):

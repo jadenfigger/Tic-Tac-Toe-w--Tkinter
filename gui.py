@@ -18,11 +18,19 @@ class GUIController:
 		self.buttonPressedColor = "#fc4430"
 		self.buttonHovorColor = "#fc7365"
 
+		self.sBtn = None
+		self.mBtn = None
+		self.eBtn = None
+		self.iBtn = None
+
 		self.tictactoe = None
 		self.buttonList = []
 
+		self.gameMode = None
+		self.diff = None
+
 		self.sliderValue = 3
-		self.gridSlider = DoubleVar()
+		self.gridSlider = 3
 
 	#Displaying the home window, is the first window called
 	def disHome(self):
@@ -44,33 +52,43 @@ class GUIController:
 
 		# Displaying Single Player Button
 		buttonsList.append(Button(middleFrameTop, text="Single Player", bg=self.buttonColor, fg=self.buttonTextColor,
-		 activebackground=self.buttonPressedColor, padx=10, pady=10, width=10, relief=GROOVE))
+		 activebackground=self.buttonPressedColor, padx=10, pady=10, width=10, relief=GROOVE,
+		 command=lambda x="s": self.setGameMode(x)))
 		buttonsList[-1].grid(column=0, row=0, padx=2, pady=2)
+		self.sBtn = buttonsList[-1]
 
 		# Displaying Multiplayer Button
 		buttonsList.append(Button(middleFrameTop, text="Multiplayer", bg=self.buttonColor, fg=self.buttonTextColor,
-		 activebackground=self.buttonPressedColor, padx=10, pady=10, width=10, relief=GROOVE))
+		 activebackground=self.buttonPressedColor, padx=10, pady=10, width=10, relief=GROOVE,
+		 command=lambda x="m": self.setGameMode(x)))
 		buttonsList[-1].grid(column=0, row=1, padx=2, pady=2)
+		self.mBtn = buttonsList[-1]
 
 		# Displaying Easy Button
 		buttonsList.append(Button(middleFrameMid, text="Easy", bg=self.buttonColor, fg=self.buttonTextColor,
-		 activebackground=self.buttonPressedColor, padx=10, pady=10, width=10, relief=GROOVE))
+		 activebackground=self.buttonPressedColor, padx=10, pady=10, width=10, relief=GROOVE,
+		 state=DISABLED if self.gameMode==None else NORMAL), command=lambda x="e": self.activateDiffBtns(x))
 		buttonsList[-1].grid(column=0, row=0, padx=2, pady=2)	
+		self.eBtn = buttonsList[-1]
 
 		# Displaying Impossible Button
 		buttonsList.append(Button(middleFrameMid, text="Impossible", bg=self.buttonColor, fg=self.buttonTextColor,
-		 activebackground=self.buttonPressedColor, padx=10, pady=10, width=10, relief=GROOVE))
+		 activebackground=self.buttonPressedColor, padx=10, pady=10, width=10, relief=GROOVE,
+		 state=DISABLED if self.gameMode==None else NORMAL), command=lambda x="i": self.activateDiffBtns(x))
 		buttonsList[-1].grid(column=1, row=0, padx=2, pady=2)
+		self.iBtn = buttonsList[-1]
 
 		# Changing the button colors when the mouse is hovored over
 		for button in buttonsList:
 			self.changeOnHover(button, self.buttonHovorColor, self.buttonColor)
+		
 
 		# Displaying the slider to change the game grid size
 		Label(middleFrameBot, text="Enter Board Size:", bg=self.frameColor, fg=self.titleColor,).grid(column=0, row=0)
 		
-		self.gridSlider = Scale(middleFrameBot, from_=3, to=20, orient=HORIZONTAL, bg=self.frameColor, fg=self.buttonTextColor,
-		activebackground=self.backgroundColor, troughcolor=self.buttonColor, variable=self.sliderValue, command=self.updateSliderValue())
+		self.gridSlider = Scale(middleFrameBot, from_=3, to=21, orient=HORIZONTAL, bg=self.frameColor, fg=self.buttonTextColor,
+		activebackground=self.backgroundColor, troughcolor=self.buttonColor,
+		 variable=self.sliderValue, command=self.updateSliderValue)
 		self.gridSlider.grid(column=0, row=1, sticky="nsew", padx=20, pady=2)
 
 		self.gridSlider.config()
@@ -106,11 +124,19 @@ class GUIController:
 	def disGameWindow(self, p):
 		gridSize = p[0]
 		initial = p[1]
-		# Clear the current window
-		self.clearWindow()
 
 		if (initial):
 			self.tictactoe = TicTacToe.ttt(gridSize)
+
+			if (self.gameMode == None):
+				messagebox.showinfo("Error", "Please select a gamemode.")
+				self.disHome()
+			elif (self.gameMode == "m" and self.diff == None):
+				messagebox.showinfo("Error", "Please select a game difficulty when playing single player.")
+				self.disHome()
+
+		# Clear the current window
+		self.clearWindow()
 
 		topFrame = Frame(window)
 		gameFrame = Frame(window, padx=15, pady=15)
@@ -190,13 +216,30 @@ class GUIController:
 
 	def findFontSize(self, size):
 		s = 22
-		if (3 <= size < 4): s = 100
-		elif (6 <= size < 15): s = 30
-		else: s = 20
+		if (size==3): s = 80
+		elif (5 <= size <= 9): s = 40
+		elif (11 <= size <= 15): s = 25
+		else: s = 18
 
 		f = font.Font(family="Roboto", size=s)
 		return f
 
 	def updateSliderValue(self, variable):
-		print("slider changed")
-		
+		temp = int(variable)
+		if (temp%2==0):
+			self.gridSlider.set(temp+1)
+
+	def activateDiffBtns(self, d):
+		self.diff = d
+
+	def setGameMode(self, m):	
+		self.gameMode = m
+
+		if (self.gameMode == "s"):
+			self.eBtn['state'] = NORMAL
+			self.iBtn['state'] = NORMAL
+
+		if (self.gameMode == "s"):
+			self.sBtn['bg'] = self.buttonPressedColor
+		else:
+			self.mBtn['bg'] = self.buttonPressedColor
