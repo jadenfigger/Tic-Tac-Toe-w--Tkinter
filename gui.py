@@ -18,13 +18,22 @@ class GUIController:
 		self.buttonPressedColor = "#fc4430"
 		self.buttonHovorColor = "#fc7365"
 
-		self.sBtn = None
-		self.mBtn = None
-		self.eBtn = None
-		self.iBtn = None
+		# Single = 0, multiplayer = 1, easy = 2, impossible = 3
+		self.buttonList = [[None, self.buttonColor], [None, self.buttonColor], [None, self.buttonColor], [None, self.buttonColor]]	
 
 		self.tictactoe = None
-		self.buttonList = []
+
+		self.gameMode = None
+		self.diff = None
+
+		self.sliderValue = 3
+		self.gridSlider = 3
+
+	def resetVariables(self):
+		# Single = 0, multiplayer = 1, easy = 2, impossible = 3
+		self.buttonList = [[None, self.buttonColor], [None, self.buttonColor], [None, self.buttonColor], [None, self.buttonColor]]	
+
+		self.tictactoe = None
 
 		self.gameMode = None
 		self.diff = None
@@ -37,6 +46,9 @@ class GUIController:
 		# Is called at the beginning of each window function to clear the window before we draw on it again
 		self.clearWindow()
 
+		# Reset all values
+		self.resetVariables()
+
 		# Creating the frames
 		topFrame = Frame(window)
 		middleFrames = Frame(window, pady=10, relief=RIDGE, bd=2)
@@ -48,40 +60,34 @@ class GUIController:
 		# Display the title
 		Label(topFrame, text="Tic Tac Toe", bg=self.backgroundColor, fg=self.titleColor, font=("Roboto", 35)).grid(column=0, row=0, pady=15)
 
-		buttonsList = []
 
 		# Displaying Single Player Button
-		buttonsList.append(Button(middleFrameTop, text="Single Player", bg=self.buttonColor, fg=self.buttonTextColor,
+		self.buttonList[0][0] = Button(middleFrameTop, text="Single Player", bg=self.buttonList[0][1], fg=self.buttonTextColor,
 		 activebackground=self.buttonPressedColor, padx=10, pady=10, width=10, relief=GROOVE,
-		 command=lambda x="s": self.setGameMode(x)))
-		buttonsList[-1].grid(column=0, row=0, padx=2, pady=2)
-		self.sBtn = buttonsList[-1]
+		 command=lambda x="s": self.setGameMode(x))
+		self.buttonList[0][0].grid(column=0, row=0, padx=2, pady=2)
 
 		# Displaying Multiplayer Button
-		buttonsList.append(Button(middleFrameTop, text="Multiplayer", bg=self.buttonColor, fg=self.buttonTextColor,
+		self.buttonList[1][0] = Button(middleFrameTop, text="Multiplayer", bg=self.buttonColor, fg=self.buttonTextColor,
 		 activebackground=self.buttonPressedColor, padx=10, pady=10, width=10, relief=GROOVE,
-		 command=lambda x="m": self.setGameMode(x)))
-		buttonsList[-1].grid(column=0, row=1, padx=2, pady=2)
-		self.mBtn = buttonsList[-1]
+		 command=lambda x="m": self.setGameMode(x))
+		self.buttonList[1][0].grid(column=0, row=1, padx=2, pady=2)
 
 		# Displaying Easy Button
-		buttonsList.append(Button(middleFrameMid, text="Easy", bg=self.buttonColor, fg=self.buttonTextColor,
+		self.buttonList[2][0] = Button(middleFrameMid, text="Easy", bg=self.buttonColor, fg=self.buttonTextColor,
 		 activebackground=self.buttonPressedColor, padx=10, pady=10, width=10, relief=GROOVE,
-		 state=DISABLED if self.gameMode==None else NORMAL), command=lambda x="e": self.activateDiffBtns(x))
-		buttonsList[-1].grid(column=0, row=0, padx=2, pady=2)	
-		self.eBtn = buttonsList[-1]
+		 state=DISABLED if self.gameMode==None else NORMAL, command=lambda x=2: self.activateDiffBtns(x))
+		self.buttonList[2][0].grid(column=0, row=0, padx=2, pady=2)	
 
 		# Displaying Impossible Button
-		buttonsList.append(Button(middleFrameMid, text="Impossible", bg=self.buttonColor, fg=self.buttonTextColor,
+		self.buttonList[3][0] = Button(middleFrameMid, text="Impossible", bg=self.buttonColor, fg=self.buttonTextColor,
 		 activebackground=self.buttonPressedColor, padx=10, pady=10, width=10, relief=GROOVE,
-		 state=DISABLED if self.gameMode==None else NORMAL), command=lambda x="i": self.activateDiffBtns(x))
-		buttonsList[-1].grid(column=1, row=0, padx=2, pady=2)
-		self.iBtn = buttonsList[-1]
+		 state=DISABLED if self.gameMode==None else NORMAL, command=lambda x=3: self.activateDiffBtns(x))
+		self.buttonList[3][0].grid(column=1, row=0, padx=2, pady=2)
 
 		# Changing the button colors when the mouse is hovored over
-		for button in buttonsList:
-			self.changeOnHover(button, self.buttonHovorColor, self.buttonColor)
-		
+		for button in self.buttonList:
+			self.changeOnHover(button[0], self.buttonHovorColor, button[1])
 
 		# Displaying the slider to change the game grid size
 		Label(middleFrameBot, text="Enter Board Size:", bg=self.frameColor, fg=self.titleColor,).grid(column=0, row=0)
@@ -131,9 +137,9 @@ class GUIController:
 			if (self.gameMode == None):
 				messagebox.showinfo("Error", "Please select a gamemode.")
 				self.disHome()
-			elif (self.gameMode == "m" and self.diff == None):
+			elif (self.gameMode == "s" and self.diff == None):
 				messagebox.showinfo("Error", "Please select a game difficulty when playing single player.")
-				self.disHome()
+				self.disHome()			
 
 		# Clear the current window
 		self.clearWindow()
@@ -166,11 +172,11 @@ class GUIController:
 		Label(topFrame, text="Player", bg=self.frameColor, fg=self.titleColor, padx=5).grid(column=0, row=0)
 		Label(topFrame, text="Computer", bg=self.frameColor, fg=self.titleColor, padx=5).grid(column=1, row=0)
 
-		# Displaying the home button
+		# Displaying the exit button
 		Button(bottomFrame, text="Exit", bg="red", fg=self.buttonTextColor, width=10,
 		 command=lambda: sys.exit(), relief=GROOVE).grid(column=0, row=0, padx=5, pady=15, sticky="nsew")
 
-		# Displaying the start button
+		# Displaying the home button
 		sB = Button(bottomFrame, text="Home", bg="#4ABF36", activebackground="#62FA47", fg=self.buttonTextColor,
 		 width=10, relief=GROOVE, command=self.disHome)
 		sB.grid(column=1, row=0, padx=5, pady=15, sticky="nsew")
@@ -188,7 +194,13 @@ class GUIController:
 		bottomFrame.configure(bg=self.backgroundColor)
 
 		window.mainloop()
-		
+
+		# Called when the user clicks a grid in the game board
+	def buttonClicked(self, index):
+		self.buttonList[index[0]][index[1]]['font'] = self.findFontSize(self.tictactoe.gridSize)
+		self.buttonList[index[0]][index[1]]['text'] = self.tictactoe.turn
+
+		self.tictactoe.updateGameGrid(index)
 
 	# Function to change properties of button on hover
 	def changeOnHover(self, button, colorOnHover, colorOnLeave):
@@ -200,14 +212,6 @@ class GUIController:
 		# Background color on leving widget
 		button.bind("<Leave>", func=lambda e: button.config(
 			background=colorOnLeave))
-
-
-	def buttonClicked(self, index):
-		self.buttonList[index[0]][index[1]]['font'] = self.findFontSize(self.tictactoe.gridSize)
-		self.buttonList[index[0]][index[1]]['text'] = self.tictactoe.turn
-
-		self.tictactoe.updateGameGrid(index)
-
 
 	# Clears the entire window
 	def clearWindow(self):
@@ -230,16 +234,63 @@ class GUIController:
 			self.gridSlider.set(temp+1)
 
 	def activateDiffBtns(self, d):
-		self.diff = d
+		d = int(d)
+
+		if (self.buttonList[d][0]['state'] != DISABLED):
+			if (self.diff != None and (self.diff != d)):
+				i = int(d+1 if d==2 else d-1)
+				self.buttonList[i][1] = self.buttonColor
+				self.buttonList[i][0].configure(bg=self.buttonList[i][1])
+				self.changeOnHover(self.buttonList[i][0], self.buttonHovorColor, self.buttonList[i][1])
+
+
+			self.buttonList[d][1] = self.buttonPressedColor
+		
+			self.buttonList[d][0].configure(bg=self.buttonList[d][1])
+			self.changeOnHover(self.buttonList[d][0], self.buttonHovorColor, self.buttonList[d][1])
+
+			self.diff = d
 
 	def setGameMode(self, m):	
-		self.gameMode = m
+		if (m == "s"):
+			self.diffButtonState(NORMAL)
 
-		if (self.gameMode == "s"):
-			self.eBtn['state'] = NORMAL
-			self.iBtn['state'] = NORMAL
-
-		if (self.gameMode == "s"):
-			self.sBtn['bg'] = self.buttonPressedColor
+		if (m == "s"):
+			if (self.gameMode == None):
+				self.buttonList[0][1] = self.buttonPressedColor
+				self.gameMode = m
+				self.buttonList[1][0].configure(state=DISABLED)
+			elif (self.gameMode == "s"):
+				self.buttonList[0][1] = self.buttonColor
+				self.gameMode = None
+				self.diffButtonState(DISABLED)
+				self.buttonList[1][0].configure(state=NORMAL)
+				
+			self.buttonList[0][0].configure(bg=self.buttonList[0][1])
+			self.changeOnHover(self.buttonList[0][0], self.buttonHovorColor, self.buttonList[0][1])
 		else:
-			self.mBtn['bg'] = self.buttonPressedColor
+			if (self.gameMode == None):
+				self.buttonList[1][1] = self.buttonPressedColor
+				self.gameMode = m
+				self.buttonList[0][0].configure(state=DISABLED)
+			elif (self.gameMode == "m"):
+				self.buttonList[1][1] = self.buttonColor
+				self.gameMode = None
+				self.buttonList[0][0].configure(state=NORMAL)
+
+
+			self.buttonList[1][0].configure(bg=self.buttonList[1][1])
+			self.changeOnHover(self.buttonList[1][0], self.buttonHovorColor, self.buttonList[1][1])
+		
+	def diffButtonState(self, state):
+		self.buttonList[2][0]['state'] = state
+		self.buttonList[3][0]['state'] = state
+
+		if (state == DISABLED):
+			self.buttonList[3][1] = self.buttonColor
+			self.buttonList[3][0].configure(bg=self.buttonList[3][1])
+			self.changeOnHover(self.buttonList[3][0], self.buttonHovorColor, self.buttonList[3][1])
+
+			self.buttonList[2][1] = self.buttonColor
+			self.buttonList[2][0].configure(bg=self.buttonList[2][1])
+			self.changeOnHover(self.buttonList[2][0], self.buttonHovorColor, self.buttonList[2][1])
