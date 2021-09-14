@@ -22,7 +22,7 @@ class ttt:
 
 	def updateGameGrid(self, index):
 		self.grid[index[0]][index[1]] = self.turn
-		self.findWinner(index)	
+		winner = self.findWinner(index)	
 
 		self.turn = -self.turn
 		
@@ -34,56 +34,58 @@ class ttt:
 			y = randint(0, self.gridSize-1)
 		return (x, y)
 
-	def findWinner(self, index):
-		
+	def findWinner(self, index, grid=None):
+		if (grid == None):
+			grid = self.grid
+
 
 		# Row
 		found = True
 		for j in range(self.gridSize-1):
-			if (self.grid[index[0]][j] != self.grid[index[0]][j+1] or self.grid[index[0]][j] == 0):
+			if (grid[index[0]][j] != grid[index[0]][j+1] or grid[index[0]][j] == 0):
 				found = False
 				break
 		if (found):
 			self.winner = self.turn
-			return
+			return self.turn
 		
 		# Column
 		found = True
 		for i in range(self.gridSize-1):
-			if (self.grid[i][index[1]] != self.grid[i+1][index[1]] or self.grid[i][index[1]] == 0):
+			if (grid[i][index[1]] != grid[i+1][index[1]] or grid[i][index[1]] == 0):
 				found = False
 				break
 		if (found):
 			self.winner = self.turn
-			return
+			return self.turn
 		
 		# Top Left to Bottom Right Diagonal
 		if (index[0] == index[1]):
 			found = True
 			for i in range(self.gridSize-1):
-				if (self.grid[i][i] != self.grid[i+1][i+1] or self.grid[i][i] == 0):
+				if (grid[i][i] != grid[i+1][i+1] or grid[i][i] == 0):
 					found = False
 					break
 			if (found):
 				self.winner = self.turn
-				return
+				return self.turn
 
 		# Top Right to Bottom Left Diagonal
 		if (index[0] + index[1] == self.gridSize-1):
 			found = True
 			for i in range(self.gridSize-1):
-				if (self.grid[self.gridSize-i-1][i] != self.grid[self.gridSize-i-2][i+1] or self.grid[self.gridSize-i-1][i] == 0):
+				if (grid[self.gridSize-i-1][i] != grid[self.gridSize-i-2][i+1] or grid[self.gridSize-i-1][i] == 0):
 					found = False
 					break
 			if (found):
 				self.winner = self.turn
-				return
+				return self.turn
 			
 		
 		for i in range(self.gridSize):
 			for j in range(self.gridSize):
-				if (self.grid[i][j] == 0):
-					return
+				if (grid[i][j] == 0):
+					return 0
 
-		self.winner = 0
+		return None
 		

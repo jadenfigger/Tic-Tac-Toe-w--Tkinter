@@ -1,14 +1,15 @@
+from TicTacToe import ttt as t
+
 class Minimax:
-	def __init__(self, gs, gl):
+	def __init__(self, gs):
 		self.gridSize = gs
-		self.gridState = gl
+		
 
-	def returnBestMove(self, player, maxDepth):
-		pass
-
+	def minimax(self, state, currIndex, depth, maximizer):
+		winner = t.findWinner(currIndex, state)
+		if (depth == 0 or winner != None):
+			return state, currIndex, winner
 		
 		
 
-	
-	def minimax(self, state, depth, player):
-		pass
+		

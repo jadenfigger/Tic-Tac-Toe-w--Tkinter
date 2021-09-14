@@ -3,6 +3,7 @@ from tkinter import font
 from main import *
 import sys
 import TicTacToe
+import Minimax
 
 window = Tk()
 window.config(padx=15, pady=15)
@@ -22,6 +23,7 @@ class GUIController:
 		self.buttonList = [[None, self.buttonColor], [None, self.buttonColor], [None, self.buttonColor], [None, self.buttonColor]]	
 
 		self.tictactoe = None
+		self.minimax = None
 
 		self.gameMode = None
 		self.diff = None
@@ -141,7 +143,7 @@ class GUIController:
 				self.disHome()
 
 			self.tictactoe = TicTacToe.ttt(gridSize)
-				
+			self.minimax = Minimax.Minimax(gridSize)
 
 		# Clear the current window
 		self.clearWindow()
