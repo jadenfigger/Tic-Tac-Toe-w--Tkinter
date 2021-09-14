@@ -1,5 +1,3 @@
-
-
 class Minimax:
 	def __init__(self, gs, gl):
 		self.gridSize = gs

@@ -1,6 +1,6 @@
 from tkinter import *
 from tkinter import font
-from main import * 
+from main import *
 import sys
 import TicTacToe
 
@@ -128,18 +128,20 @@ class GUIController:
   
 	# Displaying the game window with proper grid size
 	def disGameWindow(self, p):
+
 		gridSize = p[0]
 		initial = p[1]
 
 		if (initial):
-			self.tictactoe = TicTacToe.ttt(gridSize)
-
 			if (self.gameMode == None):
 				messagebox.showinfo("Error", "Please select a gamemode.")
 				self.disHome()
 			elif (self.gameMode == "s" and self.diff == None):
 				messagebox.showinfo("Error", "Please select a game difficulty when playing single player.")
-				self.disHome()			
+				self.disHome()
+
+			self.tictactoe = TicTacToe.ttt(gridSize)
+				
 
 		# Clear the current window
 		self.clearWindow()
@@ -163,14 +165,16 @@ class GUIController:
 				frames[i][j].pack_propagate(False)
 				frames[i][j].grid(row=i, column=j, padx=px, pady=py)
 
-				self.buttonList[i].append(Button(frames[i][j], text=self.tictactoe.grid[i][j], bg=self.frameColor, relief=FLAT,
-				command=lambda p=(i, j): self.buttonClicked(p)))
+				self.buttonList[i].append(Button(frames[i][j], text=" ",
+				 bg=self.frameColor, relief=FLAT,
+				 command=lambda p=(i, j): self.buttonClicked(p)))
 				self.buttonList[i][-1].pack(expand=True, fill=BOTH)
 
 
 		# Displaying the score and who's turn it is
-		Label(topFrame, text="Player", bg=self.frameColor, fg=self.titleColor, padx=5).grid(column=0, row=0)
-		Label(topFrame, text="Computer", bg=self.frameColor, fg=self.titleColor, padx=5).grid(column=1, row=0)
+		Label(topFrame, text="Player", bg=self.frameColor, fg=self.titleColor, padx=5).grid(column=0, row=0, sticky="nsew")
+		Label(topFrame, text="", bg=self.backgroundColor, padx=10).grid(column=1, row=0, sticky="nsew")
+		Label(topFrame, text="Computer", bg=self.frameColor, fg=self.titleColor, padx=5).grid(column=2, row=0, sticky="nsew")
 
 		# Displaying the exit button
 		Button(bottomFrame, text="Exit", bg="red", fg=self.buttonTextColor, width=10,
@@ -196,11 +200,34 @@ class GUIController:
 		window.mainloop()
 
 		# Called when the user clicks a grid in the game board
+
+	# Called when a grid button is clicked
 	def buttonClicked(self, index):
 		self.buttonList[index[0]][index[1]]['font'] = self.findFontSize(self.tictactoe.gridSize)
-		self.buttonList[index[0]][index[1]]['text'] = self.tictactoe.turn
+		self.buttonList[index[0]][index[1]]['text'] = ("X" if self.tictactoe.turn==1 else "O")
 
 		self.tictactoe.updateGameGrid(index)
+
+		if (self.tictactoe.winner != None):
+			if (self.tictactoe.winner == 1):
+				messagebox.showinfo("Winner", "Yayayayay YOU WON!!!")
+			elif (self.tictactoe.winner == -1): 
+				messagebox.showinfo("Loser", "The computer took the victory this time")
+			elif (self.tictactoe.winner == 0):
+				messagebox.showinfo("Tie", "This match has resulted in a tie")
+
+			self.disHome()
+			
+
+		if (self.gameMode == "s"):
+			if (self.diff == 2 and self.tictactoe.turn == -1):
+				# Easy Difficulty, random choice for computer
+				self.buttonClicked(self.tictactoe.randomIndex())
+			elif (self.diff == 3 and self.turn == -1):
+				# Minimax Algorithm
+				pass
+		else:
+			pass
 
 	# Function to change properties of button on hover
 	def changeOnHover(self, button, colorOnHover, colorOnLeave):
@@ -294,3 +321,11 @@ class GUIController:
 			self.buttonList[2][1] = self.buttonColor
 			self.buttonList[2][0].configure(bg=self.buttonList[2][1])
 			self.changeOnHover(self.buttonList[2][0], self.buttonHovorColor, self.buttonList[2][1])
+
+	def displayLetter(self):
+		if (self.tictactoe.turn == 1):
+			return "X"
+		elif (self.tictactoe.turn == -1): 
+			return "O"
+		else:
+			return " "
