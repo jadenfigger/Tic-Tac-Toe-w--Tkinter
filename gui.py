@@ -4,6 +4,7 @@ from main import *
 import sys
 import TicTacToe
 import Minimax
+import copy
 
 window = Tk()
 window.config(padx=15, pady=15)
@@ -143,7 +144,7 @@ class GUIController:
 				self.disHome()
 
 			self.tictactoe = TicTacToe.ttt(gridSize)
-			self.minimax = Minimax.Minimax(gridSize)
+			self.minimax = Minimax.Minimax(gridSize, self.tictactoe)
 
 		# Clear the current window
 		self.clearWindow()
@@ -225,9 +226,10 @@ class GUIController:
 			if (self.diff == 2 and self.tictactoe.turn == -1):
 				# Easy Difficulty, random choice for computer
 				self.buttonClicked(self.tictactoe.randomIndex())
-			elif (self.diff == 3 and self.turn == -1):
-				# Minimax Algorithm
-				pass
+			elif (self.diff == 3 and self.tictactoe.turn == -1):
+				winner, nextMove = self.minimax.minimax(copy.deepcopy(self.tictactoe.grid), index, 5, self.tictactoe.turn)
+				self.tictactoe.winner = None
+				self.buttonClicked(nextMove)
 		else:
 			pass
 
