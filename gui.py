@@ -22,6 +22,8 @@ class GUIController:
 
 		# Single = 0, multiplayer = 1, easy = 2, impossible = 3
 		self.buttonList = [[None, self.buttonColor], [None, self.buttonColor], [None, self.buttonColor], [None, self.buttonColor]]	
+		self.turnLblX = None
+		self.turnLblO = None
 
 		self.tictactoe = None
 		self.minimax = None
@@ -35,6 +37,8 @@ class GUIController:
 	def resetVariables(self):
 		# Single = 0, multiplayer = 1, easy = 2, impossible = 3
 		self.buttonList = [[None, self.buttonColor], [None, self.buttonColor], [None, self.buttonColor], [None, self.buttonColor]]	
+		self.turnLblX = None
+		self.turnLblO = None
 
 		self.tictactoe = None
 
@@ -83,7 +87,7 @@ class GUIController:
 		self.buttonList[2][0].grid(column=0, row=0, padx=2, pady=2)	
 
 		# Displaying Impossible Button
-		self.buttonList[3][0] = Button(middleFrameMid, text="Impossible", bg=self.buttonColor, fg=self.buttonTextColor,
+		self.buttonList[3][0] = Button(middleFrameMid, text="Hard", bg=self.buttonColor, fg=self.buttonTextColor,
 		 activebackground=self.buttonPressedColor, padx=10, pady=10, width=10, relief=GROOVE,
 		 state=DISABLED if self.gameMode==None else NORMAL, command=lambda x=3: self.activateDiffBtns(x))
 		self.buttonList[3][0].grid(column=1, row=0, padx=2, pady=2)
@@ -131,7 +135,6 @@ class GUIController:
   
 	# Displaying the game window with proper grid size
 	def disGameWindow(self, p):
-
 		gridSize = p[0]
 		initial = p[1]
 
@@ -141,6 +144,10 @@ class GUIController:
 				self.disHome()
 			elif (self.gameMode == "s" and self.diff == None):
 				messagebox.showinfo("Error", "Please select a game difficulty when playing single player.")
+				self.disHome()
+
+			if (self.diff == 3 and gridSize > 3):
+				messagebox.showinfo("Error", "Impossible difficulty not avaliable for game sizes above 3 :(")
 				self.disHome()
 
 			self.tictactoe = TicTacToe.ttt(gridSize)
@@ -172,11 +179,18 @@ class GUIController:
 				 bg=self.frameColor, relief=FLAT,
 				 command=lambda p=(i, j): self.buttonClicked(p)))
 				self.buttonList[i][-1].pack(expand=True, fill=BOTH)
+				self.buttonList[i][j]['font'] = self.findFontSize(self.tictactoe.gridSize)
+
+		for i in range(self.tictactoe.gridSize):
+			for j in range(self.tictactoe.gridSize):
+				self.buttonList[i][j]['text'] = self.displayLetter(i, j)
 
 		# Displaying the score and who's turn it is
-		Label(topFrame, text="Player", bg=str(self.buttonHovorColor) if self.tictactoe.turn==1 else str(self.frameColor), fg=self.titleColor, padx=5).grid(column=0, row=0, sticky="nsew")
+		self.turnLblX = Label(topFrame, text="Player" if self.gameMode=="s" else "Player 1", bg=str(self.buttonHovorColor) if self.tictactoe.turn==1 else str(self.frameColor), fg=self.titleColor, padx=5)
+		self.turnLblX.grid(column=0, row=0, sticky="nsew")
 		Label(topFrame, text="", bg=self.backgroundColor, padx=10).grid(column=1, row=0, sticky="nsew")
-		Label(topFrame, text="Computer", bg=str(self.buttonHovorColor) if self.tictactoe.turn==-1 else str(self.frameColor), fg=self.titleColor, padx=5).grid(column=2, row=0, sticky="nsew")
+		self.turnLblO = Label(topFrame, text="Computer" if self.gameMode=="s" else "Player 2", bg=str(self.buttonHovorColor) if self.tictactoe.turn==-1 else str(self.frameColor), fg=self.titleColor, padx=5)
+		self.turnLblO.grid(column=2, row=0, sticky="nsew")
 
 		# Displaying the exit button
 		Button(bottomFrame, text="Exit", bg="red", fg=self.buttonTextColor, width=10,
@@ -205,32 +219,44 @@ class GUIController:
 
 	# Called when a grid button is clicked
 	def buttonClicked(self, index):
-		self.buttonList[index[0]][index[1]]['font'] = self.findFontSize(self.tictactoe.gridSize)
-		self.buttonList[index[0]][index[1]]['text'] = ("X" if self.tictactoe.turn==1 else "O")
-
 		self.tictactoe.updateGameGrid(index)
 
-		if (self.tictactoe.winner != None):
-			if (self.tictactoe.winner == 1):
-				messagebox.showinfo("Winner", "Yayayayay YOU WON!!!")
-			elif (self.tictactoe.winner == -1): 
-				messagebox.showinfo("Loser", "The computer took the victory this time")
-			elif (self.tictactoe.winner == 0):
-				messagebox.showinfo("Tie", "This match has resulted in a tie")
+		self.buttonList[index[0]][index[1]]['text'] = ("X" if self.tictactoe.grid[index[0]][index[1]]==1 else "O")
 
-			self.disHome()
-			
 
 		if (self.gameMode == "s"):
+			if (self.tictactoe.winner != None):
+				if (self.tictactoe.winner == 1):
+					messagebox.showinfo("Winner", "Yayayayay YOU WON!!!")
+				elif (self.tictactoe.winner == -1): 
+					messagebox.showinfo("Loser", "The computer took the victory this time")
+				elif (self.tictactoe.winner == 0):
+					messagebox.showinfo("Tie", "This match has resulted in a tie")
+
+				self.disHome()
+
 			if (self.diff == 2 and self.tictactoe.turn == -1):
 				# Easy Difficulty, random choice for computer
 				self.buttonClicked(self.tictactoe.randomIndex())
 			elif (self.diff == 3 and self.tictactoe.turn == -1):
 				winner, nextMove = self.minimax.minimax(copy.deepcopy(self.tictactoe.grid), index, 5, self.tictactoe.turn)
-				self.tictactoe.winner = None
+				self.tictactoe.findWinner()
 				self.buttonClicked(nextMove)
-		else:
-			pass
+		elif (self.gameMode == "m"):
+			print(self.tictactoe.turn)
+			if (self.tictactoe.winner != None):
+				if (self.tictactoe.winner == 1):
+					messagebox.showinfo("Winner", "Player 1 has annihilated player 2!!")
+				elif (self.tictactoe.winner == -1): 
+					messagebox.showinfo("Loser", "Player 2 has defeated player 1!!")
+				elif (self.tictactoe.winner == 0):
+					messagebox.showinfo("Tie", "This match has resulted in a tie")
+
+				self.disHome()
+
+			self.turnLblX['bg'] = (self.buttonHovorColor if self.tictactoe.turn==1 else self.frameColor)
+			self.turnLblO['bg'] = (self.buttonHovorColor if self.tictactoe.turn==-1 else self.frameColor)
+
 
 	# Function to change properties of button on hover
 	def changeOnHover(self, button, colorOnHover, colorOnLeave):
@@ -325,10 +351,10 @@ class GUIController:
 			self.buttonList[2][0].configure(bg=self.buttonList[2][1])
 			self.changeOnHover(self.buttonList[2][0], self.buttonHovorColor, self.buttonList[2][1])
 
-	def displayLetter(self):
-		if (self.tictactoe.turn == 1):
+	def displayLetter(self, i, j):
+		if (self.tictactoe.grid[i][j] == 1):
 			return "X"
-		elif (self.tictactoe.turn == -1): 
+		elif (self.tictactoe.grid[i][j] == -1): 
 			return "O"
 		else:
 			return " "  

@@ -9,25 +9,32 @@ class Minimax:
 	def minimax(self, state, currIndex, depth, turn):
 		winner = self.ttt.findWinner(currIndex, state)
 
-  
-		if (depth == 0 or winner != None):
-			if (depth == 0 and winner==None): winner = 0
-			return winner, currIndex
+		if (winner == -1):
+			return winner - depth, currIndex
+		elif (winner == -1):
+			return winner + depth, currIndex
+		elif (winner == 0):
+			return 0, currIndex
+
+		if (depth==0 and winner==None):
+			return 0, currIndex
 		
-		evalLimit = -turn * 10
+		evalLimit = -turn * 1000
 		bestIndex = None
 		for i in range(self.gridSize):
 			for j in range(self.gridSize):
 				if (state[i][j] == 0):
-					eval, newIndex = self.minimax(self.copyGrid(state, turn, (i, j)), (i, j), depth-1, -turn)
-					if (turn > 0 and eval >= evalLimit):
-						print(eval, newIndex, turn)
+					state[i][j] = turn
+
+					eval, newIndex = self.minimax(state, (i, j), depth-1, -turn)
+					state[i][j] = 0
+					if (turn > 0 and eval > evalLimit):
 						bestIndex = newIndex
 						evalLimit = eval
-					elif (turn < 0 and eval <= evalLimit):
-						print(eval, newIndex, turn)
+					elif (turn < 0 and eval < evalLimit):
 						bestIndex = newIndex
 						evalLimit = eval
+		
 		return evalLimit, bestIndex
 
 

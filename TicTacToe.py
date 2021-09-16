@@ -18,6 +18,9 @@ class ttt:
 			for j in range(self.gridSize):
 				grid[i].append(0)
 
+
+		# grid = [[-1, 1, 0], [0, -1, 0], [0, 0, 0]]
+
 		return grid
 
 	def updateGameGrid(self, index):
