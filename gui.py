@@ -173,11 +173,10 @@ class GUIController:
 				 command=lambda p=(i, j): self.buttonClicked(p)))
 				self.buttonList[i][-1].pack(expand=True, fill=BOTH)
 
-
 		# Displaying the score and who's turn it is
-		Label(topFrame, text="Player", bg=self.frameColor, fg=self.titleColor, padx=5).grid(column=0, row=0, sticky="nsew")
+		Label(topFrame, text="Player", bg=str(self.buttonHovorColor) if self.tictactoe.turn==1 else str(self.frameColor), fg=self.titleColor, padx=5).grid(column=0, row=0, sticky="nsew")
 		Label(topFrame, text="", bg=self.backgroundColor, padx=10).grid(column=1, row=0, sticky="nsew")
-		Label(topFrame, text="Computer", bg=self.frameColor, fg=self.titleColor, padx=5).grid(column=2, row=0, sticky="nsew")
+		Label(topFrame, text="Computer", bg=str(self.buttonHovorColor) if self.tictactoe.turn==-1 else str(self.frameColor), fg=self.titleColor, padx=5).grid(column=2, row=0, sticky="nsew")
 
 		# Displaying the exit button
 		Button(bottomFrame, text="Exit", bg="red", fg=self.buttonTextColor, width=10,
@@ -332,4 +331,4 @@ class GUIController:
 		elif (self.tictactoe.turn == -1): 
 			return "O"
 		else:
-			return " "
+			return " "  
