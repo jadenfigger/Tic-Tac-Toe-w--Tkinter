@@ -24,6 +24,9 @@ class ttt:
 		return grid
 
 	def updateGameGrid(self, index):
+		if (self.grid[index[0]][index[1]] != 0):
+			return
+
 		self.grid[index[0]][index[1]] = self.turn
 		winner = self.findWinner(index, self.grid)	
 
@@ -86,7 +89,9 @@ class ttt:
 			for j in range(self.gridSize):
 				if (grid[i][j] == 0):
 					tie = False
+		
 		if (tie):
+			self.winner = 0
 			return 0
 
 		return None

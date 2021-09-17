@@ -217,45 +217,50 @@ class GUIController:
 
 		# Called when the user clicks a grid in the game board
 
-	# Called when a grid button is clicked
+	# Called when a grid button is clickedSB1206
 	def buttonClicked(self, index):
 		self.tictactoe.updateGameGrid(index)
 
 		self.buttonList[index[0]][index[1]]['text'] = ("X" if self.tictactoe.grid[index[0]][index[1]]==1 else "O")
 
-
 		if (self.gameMode == "s"):
 			if (self.tictactoe.winner != None):
-				if (self.tictactoe.winner == 1):
-					messagebox.showinfo("Winner", "Yayayayay YOU WON!!!")
-				elif (self.tictactoe.winner == -1): 
-					messagebox.showinfo("Loser", "The computer took the victory this time")
-				elif (self.tictactoe.winner == 0):
-					messagebox.showinfo("Tie", "This match has resulted in a tie")
-
-				self.disHome()
+				self.disWinMessage(self.tictactoe.winner)
 
 			if (self.diff == 2 and self.tictactoe.turn == -1):
 				# Easy Difficulty, random choice for computer
 				self.buttonClicked(self.tictactoe.randomIndex())
 			elif (self.diff == 3 and self.tictactoe.turn == -1):
-				winner, nextMove = self.minimax.minimax(copy.deepcopy(self.tictactoe.grid), index, 5, self.tictactoe.turn)
-				self.tictactoe.findWinner()
+				winner, nextMove = self.minimax.minimax(copy.deepcopy(self.tictactoe.grid), (-1, -1), 15, self.tictactoe.turn)
+				self.tictactoe.winner = None
 				self.buttonClicked(nextMove)
 		elif (self.gameMode == "m"):
-			print(self.tictactoe.turn)
 			if (self.tictactoe.winner != None):
-				if (self.tictactoe.winner == 1):
-					messagebox.showinfo("Winner", "Player 1 has annihilated player 2!!")
-				elif (self.tictactoe.winner == -1): 
-					messagebox.showinfo("Loser", "Player 2 has defeated player 1!!")
-				elif (self.tictactoe.winner == 0):
-					messagebox.showinfo("Tie", "This match has resulted in a tie")
-
-				self.disHome()
+				self.disWinMessage(self.tictactoe.winner)
 
 			self.turnLblX['bg'] = (self.buttonHovorColor if self.tictactoe.turn==1 else self.frameColor)
 			self.turnLblO['bg'] = (self.buttonHovorColor if self.tictactoe.turn==-1 else self.frameColor)
+
+	# Called when there is a winner
+	def disWinMessage(self, winner):
+		if (self.gameMode == "s"):
+			if (winner == 1):
+				messagebox.showinfo("Winner", "Yayayayay YOU WON!!!")
+			elif (self.tictactoe.winner == -1): 
+				messagebox.showinfo("Loser", "The computer took the victory this time")
+			elif (self.tictactoe.winner == 0):
+				messagebox.showinfo("Tie", "This match has resulted in a tie")
+
+			self.disHome()
+		else:
+			if (winner == 1):
+				messagebox.showinfo("Winner", "Player 1 has annihilated player 2!!")
+			elif (self.tictactoe.winner == -1): 
+				messagebox.showinfo("Loser", "Player 2 has defeated player 1!!")
+			elif (self.tictactoe.winner == 0):
+				messagebox.showinfo("Tie", "This match has resulted in a tie")
+
+			self.disHome()
 
 
 	# Function to change properties of button on hover

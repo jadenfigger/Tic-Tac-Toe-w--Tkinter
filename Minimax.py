@@ -1,23 +1,23 @@
 import copy
 
-
 class Minimax:
 	def __init__(self, gs, t):
 		self.gridSize = gs
 		self.ttt = t
 
 	def minimax(self, state, currIndex, depth, turn):
-		winner = self.ttt.findWinner(currIndex, state)
+		if (currIndex[0] != -1 and currIndex[1] != -1):
+			winner = self.ttt.findWinner(currIndex, state)
 
-		if (winner == -1):
-			return winner - depth, currIndex
-		elif (winner == -1):
-			return winner + depth, currIndex
-		elif (winner == 0):
-			return 0, currIndex
+			if (winner == -1):
+				return winner - depth, currIndex
+			elif (winner == -1):
+				return winner + depth, currIndex
+			elif (winner == 0):
+				return 0, currIndex
 
-		if (depth==0 and winner==None):
-			return 0, currIndex
+			if (depth==0 and winner==None):
+				return 0, currIndex
 		
 		evalLimit = -turn * 1000
 		bestIndex = None
@@ -36,11 +36,5 @@ class Minimax:
 						evalLimit = eval
 		
 		return evalLimit, bestIndex
-
-
-	def copyGrid(self, original, change, index):
-		temp = copy.deepcopy(original)
-		temp[index[0]][index[1]] = change
-		return temp
 
 		
